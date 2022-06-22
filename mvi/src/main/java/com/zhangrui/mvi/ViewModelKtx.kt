@@ -1,9 +1,11 @@
 package com.zhangrui.mvi
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.annotation.MainThread
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.*
 
-fun <S : UiState, E : UiEvent> ViewModel.uiData(initState: S): Lazy<MutableUiData<S, E>> {
+fun <S : UiState, E : UiEvent> ViewModel.mutableUiData(initState: S): Lazy<MutableUiData<S, E>> {
     return object : Lazy<MutableUiData<S, E>> {
 
         private var cached: MutableUiData<S, E>? = null
@@ -20,5 +22,22 @@ fun <S : UiState, E : UiEvent> ViewModel.uiData(initState: S): Lazy<MutableUiDat
             return cached != null
         }
 
+    }
+}
+
+@MainThread
+inline fun <reified VM : ViewModel> ViewModelStoreOwner.viewModel(): Lazy<VM> {
+    return object : Lazy<VM> {
+        private var cached: VM? = null
+
+        override val value: VM
+            get() {
+                val viewModel = cached
+                return viewModel ?: ViewModelProvider(this@viewModel)[VM::class.java].also {
+                        cached = it
+                    }
+            }
+
+        override fun isInitialized() = cached != null
     }
 }

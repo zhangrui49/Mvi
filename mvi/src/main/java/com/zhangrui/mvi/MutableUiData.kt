@@ -10,10 +10,10 @@ class MutableUiData<S : UiState, E : UiEvent>(initState: S, private val scope: C
     private val _uiState = MutableStateFlow(initState)
     private val _uiEvent = MutableSharedFlow<E>()
 
-    override val uiState: StateFlow<S>
+    override val state: StateFlow<S>
         get() = _uiState.asStateFlow()
 
-    override val uiEvent: Flow<E>
+    override val event: Flow<E>
         get() = _uiEvent
 
     override fun updateUiState(update: S.() -> S) {

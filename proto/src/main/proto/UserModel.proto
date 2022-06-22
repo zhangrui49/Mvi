@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option java_package = "com.zhangrui.proto";
+option java_multiple_files = true;
+
+message UserModel {
+  bool name = 1;
+  int32 id = 2;
+  string email = 3;
+
+}
